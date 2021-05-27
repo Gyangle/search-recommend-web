@@ -16,13 +16,13 @@
     <form>
       <div class="form-group">
         <label>Who are you?</label>
-        <input type="text" value="ddd" class="form-control" aria-describedby="emailHelp"
+        <input type="text" value="ddd" id="username-input" class="form-control" aria-describedby="emailHelp"
           placeholder="Enter your name ...">
         <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
       </div>
       <div class="form-group">
         <label>Which college?</label>
-        <input type="text" value="uw" class="form-control" placeholder="Enter college name ...">
+        <input type="text" value="uw" id="query-input" class="form-control" placeholder="Enter college name ...">
       </div>
       <button type="submit" class="btn btn-primary">Search</button>
     </form>
@@ -38,52 +38,7 @@
     <p id="log"></p>
   </div>
 
-  <script type="text/javascript">
-    let form = document.querySelector('form');
-    let log = document.getElementById('log');
-    let historyP = document.getElementById('history');
-    let occranceP = document.getElementById('occrance');
-    form.addEventListener('submit', logSubmit);
-    let searchHistory = []; // keep track of query and its occurance
-
-    // handle form sumbit behavior
-    function logSubmit(event) {
-      event.preventDefault();
-      // console.log(this.querySelectorAll('input')[1].value);
-      let newP = addSearchContent(this.querySelectorAll('input')[0].value, this.querySelectorAll('input')[1].value);
-      log.prepend(newP);
-      // append college to array and update the DOM
-      searchHistory.push(this.querySelectorAll('input')[1].value);
-      displaySearchHistory(searchHistory);
-    }
-
-    // generate the given information inside a p tag
-    function addSearchContent(user, college) {
-      let pTag = document.createElement('p');
-      // console.log(user + " search " + college + ` at ${event.timeStamp};`);
-      let timeStamp = Math.floor(parseFloat(event.timeStamp));
-      pTag.textContent = user + " searched " + college + " @Time Stamp: " + timeStamp;
-      return pTag;
-    }
-
-    // display the history and occurance to desinated div
-    function displaySearchHistory(searchHistory) {
-      historyP.textContent = searchHistory;
-      // keep track of occrance and update
-      let newArray = [], wordObj;
-      searchHistory.forEach(function (word) {
-        wordObj = newArray.filter(function (w) {
-          return w.text == word;
-        });
-        if (wordObj.length) {
-          wordObj[0].size += 1;
-        } else {
-          newArray.push({ text: word, size: 1 });
-        }
-      });
-      occranceP.textContent = JSON.stringify(newArray);
-    }
-  </script>
+  <script src="./recommendation.js" defer></script>
 </body>
 
 </html>
