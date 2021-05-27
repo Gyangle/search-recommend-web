@@ -24,7 +24,7 @@ function addSearchContent(user, college) {
     let pTag = document.createElement('p');
     // console.log(user + " search " + college + ` at ${event.timeStamp};`);
     let timeStamp = Math.floor(parseFloat(event.timeStamp));
-    pTag.textContent = user + " searched " + college + " @Time Stamp: " + timeStamp;
+    pTag.textContent = user + " searched " + college + " @TimeStamp: " + timeStamp + "ms";
     return pTag;
 }
 
@@ -43,8 +43,35 @@ function displaySearchHistory(searchHistory) {
         newArray.push({ text: word, size: 1 });
     }
     });
-    occranceP.textContent = JSON.stringify(newArray);
+    updateOccranceText(newArray);
+    
 }
+
+// print the college in sorted order, based on the unsorted Array
+function updateOccranceText(newArray) {
+    // console.log(newArray[0].size);
+    
+    // sorting the array 
+    let byTimes = function() { 
+        return function(a,b) {
+            return ((a.size > b.size) ? -1 : ((a.size < b.size) ? 1 : 0));
+        }
+    };
+    let sortedArray = newArray.sort(byTimes()); // reorder the array based on time: big -> small
+
+    // generate the text to display
+    let string = "";
+    for (let i=0; i < sortedArray.length; i++) {
+        if (i < 5) { // record the top 5 result, if length is greater
+            string = string + sortedArray[i].text + "/ ";
+        }    
+    }
+
+    occranceP.textContent = string;
+    // occranceP.textContent = JSON.stringify(sortedArray);
+}
+
+
 
 function readSearchHistoryFromFile() {
     fs.readFile("./data.json", 'utf8', (err, data) => {
