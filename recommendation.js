@@ -1,4 +1,4 @@
-//const fs = require("fs")
+
 
 let form = document.querySelector('form');
 let log = document.getElementById('log');
@@ -25,6 +25,19 @@ function addSearchContent(user, college) {
     // console.log(user + " search " + college + ` at ${event.timeStamp};`);
     let timeStamp = Math.floor(parseFloat(event.timeStamp));
     pTag.textContent = user + " searched " + college + " @Time Stamp: " + timeStamp;
+
+    let searchData = {"userName": userNameInput.value, "query": queryInput.value}
+    fetch("http://yichi.me", {
+        headers: new Headers({"Content-Type": "application/json"}),
+        method: "POST",
+        mode: 'cors',
+        body: JSON.stringify(searchData)
+    }).then((response) => {
+        console.log(response.statusText)
+    }).catch((err) => {
+        console.log(err)
+    })
+
     return pTag;
 }
 
@@ -44,24 +57,4 @@ function displaySearchHistory(searchHistory) {
     }
     });
     occranceP.textContent = JSON.stringify(newArray);
-}
-
-function readSearchHistoryFromFile() {
-    fs.readFile("./data.json", 'utf8', (err, data) => {
-        if (err) {
-            console.log(err)
-        } else {
-            return JSON.parse(data)
-        }
-    })
-}
-
-function writeSearchHistoryToFile(data) {
-    fs.writeFile("./data.json", JSON.stringify(data), (err) => {
-    if (err) {
-        console.error(err);
-        return;
-    };
-    console.log("File has been written");
-    })
 }
