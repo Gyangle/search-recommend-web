@@ -18,6 +18,10 @@
   "homepage": "https://github.com/Gyangle/search-recommend-web#readme",
   "dependencies": {
     "express": "^4.17.1",
-    "fs": "*"
+    "fs": "*",
+    "mongoose": "^5.12.12"
+  },
+  "devDependencies": {
+    "mongodb-memory-server": "^6.9.6"
   }
 }

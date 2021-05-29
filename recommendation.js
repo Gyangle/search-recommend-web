@@ -1,5 +1,6 @@
 
 
+const API_ENDPOINT = "http://localhost:81"
 let form = document.querySelector('form');
 let log = document.getElementById('log');
 let historyP = document.getElementById('history');
@@ -27,16 +28,13 @@ function addSearchContent(user, college) {
     pTag.textContent = user + " searched " + college + " @Time Stamp: " + timeStamp;
 
     let searchData = {"userName": userNameInput.value, "query": queryInput.value}
-    fetch("http://yichi.me", {
-        headers: new Headers({"Content-Type": "application/json"}),
-        method: "POST",
-        mode: 'cors',
-        body: JSON.stringify(searchData)
-    }).then((response) => {
-        console.log(response.statusText)
-    }).catch((err) => {
-        console.log(err)
+
+    uploadSearchData(searchData)
+    retrieveRecommendationInformation(searchData).then(data => {
+        console.log(data)
+        // append it to the DOM
     })
+
 
     pTag.textContent = user + " searched " + college + " @TimeStamp: " + timeStamp + "ms";
     return pTag;
@@ -85,24 +83,29 @@ function updateOccranceText(newArray) {
     // occranceP.textContent = JSON.stringify(sortedArray);
 }
 
-
-
-function readSearchHistoryFromFile() {
-    fs.readFile("./data.json", 'utf8', (err, data) => {
-        if (err) {
-            console.log(err)
-        } else {
-            return JSON.parse(data)
-        }
+async function uploadSearchData(data) {
+    fetch(API_ENDPOINT, {
+        headers: new Headers({"Content-Type": "application/json"}),
+        method: "POST",
+        mode: 'cors',
+        body: JSON.stringify(data)
+    }).then((response) => {
+        console.log(response.statusText)
+    }).catch((err) => {
+        console.log(err)
     })
 }
 
-function writeSearchHistoryToFile(data) {
-    fs.writeFile("./data.json", JSON.stringify(data), (err) => {
-    if (err) {
-        console.error(err);
-        return;
-    };
-    console.log("File has been written");
-    })
+async function retrieveRecommendationInformation(data) {
+    try {
+        const response = await fetch(API_ENDPOINT + `?userName=${data.userName}&query=${data.query}`, {
+            headers: new Headers({"Content-Type": "application/json"}),
+            method: "GET",
+            mode: 'cors'
+        })
+        const recommendations = await response.json()
+        return recommendations
+    } catch (err) {
+        console.log(err)
+    }
 }
