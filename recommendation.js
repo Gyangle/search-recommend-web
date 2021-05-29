@@ -29,6 +29,23 @@ window.addEventListener('load', () => {
 // handle form sumbit behavior
 function logSubmit(event) {
     event.preventDefault();
+
+    let searchData = {"userName": userNameInput.value, "query": queryInput.value}
+
+    uploadSearchData(searchData)
+    retrieveQueryRecommendation(searchData).then(recomData => {
+        console.log(recomData)
+        // append it to the DOM
+        let recommList = document.getElementById("recomm-list")
+        recommList.innerHTML = ""
+        recomData.forEach((query) => {
+            let newItem = document.createElement("li")
+            newItem.setAttribute("class", "recomm-item")
+            newItem.innerText = query
+            recommList.append(newItem)
+        })
+    })
+    
     computeTrending(queryInput); // compute the trending
 }
 
@@ -36,17 +53,6 @@ function logSubmit(event) {
 function generateActivityContent(user, college, event) {
     let pTag = document.createElement('p');
     let timeStamp = Math.floor(parseFloat(event.timeStamp));
-    pTag.textContent = user + " searched " + college + " @Time Stamp: " + timeStamp;
-
-    let searchData = {"userName": userNameInput.value, "query": queryInput.value}
-
-    //uploadSearchData(searchData)
-    // retrieveQueryRecommendation(searchData).then(data => {
-    //     console.log(data)
-    //     // append it to the DOM
-    // })
-
-
     pTag.textContent = user + " searched " + college + " @TimeStamp: " + timeStamp + "ms";
     console.log(pTag)
     return pTag;
