@@ -1,12 +1,11 @@
 const mongoose = require("mongoose")
 const {MongoMemoryServer} = require('mongodb-memory-server');
 
-const mongoEndPoint = "mongodb://MongoDBContainer:27017/test"
-
-//const mongoEndPoint = "mongodb://localhost:27017/test"
+const mongoEndPoint = "mongodb://mongoDB:27017/searecDB"
+const TESTING = false
 
 const connect = () => {
-    if (true) {
+    if (TESTING) {
         console.log('Connecting to a mock db for testing purposes.');
 
         const mongoServer = new MongoMemoryServer();

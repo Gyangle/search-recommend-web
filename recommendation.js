@@ -1,6 +1,6 @@
 
 
-const API_ENDPOINT = "http://localhost:81"
+const API_ENDPOINT = "http://yichi.me"
 let form = document.querySelector('form');
 let historyP = document.getElementById('history');
 let occranceP = document.getElementById('occrance');
