@@ -107,6 +107,11 @@ function updateOccranceText(newArray) {
 }
 
 async function uploadSearchData(data) {
+    try {
+        
+    } catch (err) {
+        console.log(err)
+    }
     fetch(API_ENDPOINT, {
         headers: new Headers({"Content-Type": "application/json"}),
         method: "POST",
