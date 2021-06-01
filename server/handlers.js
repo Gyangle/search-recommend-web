@@ -28,47 +28,50 @@ const getRecommendationHandler = async (req, res, SearchHistory) => {
             return name != givenUserName
         })
 
+        // get all queries search by users who searched the given query
         let allQueriesFromUsersWhoSearchedTheGivenQuery = await SearchHistory
             .find({userName: usersWhoSearchedTheGivenQuery})
             .exec()
 
-           allQueriesFromUsersWhoSearchedTheGivenQuery = 
-            allQueriesFromUsersWhoSearchedTheGivenQuery.filter((doc) => {
-                return doc.query != givenQuery
-            })
-
-        let queryFrequencyMap = new Map();
-
-        allQueriesFromUsersWhoSearchedTheGivenQuery.forEach((doc) => {
-            const query = doc.query
-            if (queryFrequencyMap.has(query)) {
-                let count = queryFrequencyMap.get(query)
-                queryFrequencyMap.set(query, count + 1)
-            } else {
-                queryFrequencyMap.set(query, 1)
-            }
+        allQueriesFromUsersWhoSearchedTheGivenQuery = 
+        allQueriesFromUsersWhoSearchedTheGivenQuery.filter((doc) => {
+            return doc.query != givenQuery
         })
 
-        // sort recommendation query based on occurance 
-        let sortedRecomListBasedOnFrequency = [...queryFrequencyMap.entries()].sort((a, b) => {
-            return b[1] - a[1]
-        })
-
-        let recommList = sortedRecomListBasedOnFrequency.map((query) => {
-            return query[0]
-        })
-
-        // let sortedAndSlicedRecommendQuery = allQueriesFromUsersWhoSearchedTheGivenQuery
-        //     .sort((a, b) => {
-        //         return a.timeStamp < b.timeStamp
-        //     }).slice(0, 10)
+        // sort the query based on frequency
+        const recommendedQueries = 
+            sortRecommendationBasedOnFrequency(allQueriesFromUsersWhoSearchedTheGivenQuery)
         
-        console.log(recommList)
-        res.status(201).send(recommList)
+        console.log(recommendedQueries)
+        res.status(201).send(recommendedQueries)
     } catch (err) {
         console.log(err)
         res.status(500).send("error in fetching recommendation")
     }
+}
+
+function sortRecommendationBasedOnFrequency(queries) {
+    const queryFrequencyMap = new Map();
+    queries.forEach((doc) => {
+        const query = doc.query
+        if (queryFrequencyMap.has(query)) {
+            let count = queryFrequencyMap.get(query)
+            queryFrequencyMap.set(query, count + 1)
+        } else {
+            queryFrequencyMap.set(query, 1)
+        }
+    })
+
+    // sort recommendation query based on occurance 
+    let sortedRecomListBasedOnFrequency = [...queryFrequencyMap.entries()].sort((a, b) => {
+        return b[1] - a[1]
+    })
+
+    let recommQueryList = sortedRecomListBasedOnFrequency.map((query) => {
+        return query[0]
+    })
+
+    return recommQueryList
 }
 
 module.exports = {

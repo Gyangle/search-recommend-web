@@ -2,7 +2,6 @@
 
 const API_ENDPOINT = "http://yichi.me"
 let form = document.querySelector('form');
-let historyP = document.getElementById('history');
 let occranceP = document.getElementById('occrance');
 let userNameInput = document.getElementById('username-input')
 let queryInput = document.getElementById('query-input')
@@ -13,7 +12,6 @@ document.getElementById('clear').addEventListener('click', () => {
     // clear storage and content on page
     localStorage.removeItem('history');
     occranceP.textContent = '';
-    historyP.textContent = '';
     searchHistory = [];
 })
 
@@ -34,16 +32,7 @@ function logSubmit(event) {
 
     uploadSearchData(searchData)
     retrieveQueryRecommendation(searchData).then(recomData => {
-        console.log(recomData)
-        // append it to the DOM
-        let recommList = document.getElementById("recomm-list")
-        recommList.innerHTML = ""
-        recomData.forEach((query) => {
-            let newItem = document.createElement("li")
-            newItem.setAttribute("class", "recomm-item")
-            newItem.innerText = query
-            recommList.append(newItem)
-        })
+        addRecommendationToDOM(recomData)
     })
     
     computeTrending(queryInput); // compute the trending
@@ -62,7 +51,6 @@ function generateActivityContent(user, college, event) {
 function computeTrending(queryInput) {
     if (queryInput != null) { // if the function has a query to add to history
         searchHistory.push(queryInput.value); // update search history array with duplicates
-        historyP.textContent = searchHistory;
     }
 
     // keep track of occrance and update
@@ -108,20 +96,16 @@ function updateOccranceText(newArray) {
 
 async function uploadSearchData(data) {
     try {
-        
+        const status = await fetch(API_ENDPOINT, {
+            headers: new Headers({"Content-Type": "application/json"}),
+            method: "POST",
+            mode: 'cors',
+            body: JSON.stringify(data)
+        })
+        console.log(status.statusText)
     } catch (err) {
         console.log(err)
     }
-    fetch(API_ENDPOINT, {
-        headers: new Headers({"Content-Type": "application/json"}),
-        method: "POST",
-        mode: 'cors',
-        body: JSON.stringify(data)
-    }).then((response) => {
-        console.log(response.statusText)
-    }).catch((err) => {
-        console.log(err)
-    })
 }
 
 async function retrieveQueryRecommendation(data) {
@@ -136,4 +120,15 @@ async function retrieveQueryRecommendation(data) {
     } catch (err) {
         console.log(err)
     }
+}
+
+function addRecommendationToDOM(data) {
+    let recommList = document.getElementById("recomm-list")
+    recommList.innerHTML = ""
+    data.forEach((query) => {
+        let newItem = document.createElement("li")
+        newItem.setAttribute("class", "recomm-item")
+        newItem.innerText = query
+        recommList.append(newItem)
+    })
 }
