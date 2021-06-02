@@ -15,6 +15,15 @@ document.getElementById('clear').addEventListener('click', () => {
     searchHistory = [];
 })
 
+//add boarder to recommendation
+document.getElementById('submit-btn').addEventListener('click', () => {
+    document.getElementById('recomm-container').style.visibility = "visible"
+    document.getElementById('recommendation-1').style.border = "none"
+    document.getElementById('recommendation').style.border = "0.5px solid grey"
+})
+
+
+
 window.addEventListener('load', () => {
     let storage = JSON.parse(localStorage.getItem("history"));
     if (storage != null) { // if has cookies to use
@@ -66,7 +75,7 @@ function computeTrending(queryInput) {
         }
     });
 
-    occranceP.textContent = updateOccranceText(newArray);
+    updateOccranceText(newArray);
     // console.log(newArray);
     updateStorage(searchHistory);
 }
@@ -85,13 +94,25 @@ function updateOccranceText(newArray) {
     };
     let sortedArray = newArray.sort(byTimes()); // reorder the array based on time: big -> small
     // generate the text to display
-    let string = "";
+    // let string = "";
+    // for (let i = 0; i < sortedArray.length; i++) {
+    //     if (i < 5) { // record the top 5 result, if length is greater
+    //         string = string + sortedArray[i].text + "/      ";
+    //     }
+    // }
+    // return string;
+
+    document.getElementById("occrance").innerHTML = ""
+
     for (let i = 0; i < sortedArray.length; i++) {
         if (i < 5) { // record the top 5 result, if length is greater
-            string = string + sortedArray[i].text + "/      ";
+            let newItem = document.createElement("p")
+            newItem.textContent = i+1 + ". " + sortedArray[i].text
+            document.getElementById("occrance").append(newItem)
         }
     }
-    return string;
+
+
 }
 
 async function uploadSearchData(data) {
@@ -125,10 +146,21 @@ async function retrieveQueryRecommendation(data) {
 function addRecommendationToDOM(data) {
     let recommList = document.getElementById("recomm-list")
     recommList.innerHTML = ""
-    data.forEach((query) => {
-        let newItem = document.createElement("li")
-        newItem.setAttribute("class", "recomm-item")
-        newItem.innerText = query
-        recommList.append(newItem)
-    })
+
+    for (let i = 0; i < data.length; i++) {
+        if (i < 5) {
+            let newItem = document.createElement("li")
+            newItem.setAttribute("class", "recomm-item")
+            newItem.innerText = data[i]
+            recommList.append(newItem)
+        }
+    }
+    
+
+    // data.forEach((query) => {
+    //     let newItem = document.createElement("li")
+    //     newItem.setAttribute("class", "recomm-item")
+    //     newItem.innerText = query
+    //     recommList.append(newItem)
+    // })
 }
