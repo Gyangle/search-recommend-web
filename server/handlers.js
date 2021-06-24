@@ -16,6 +16,8 @@ const getRecommendationHandler = async (req, res, SearchHistory) => {
     let givenUserName = req.query.userName
     let givenQuery = req.query.query
 
+    console.log(`User ${givenUserName} searched the query ${givenQuery}`)
+
     try {
 
         // get all docs that match the given query 
